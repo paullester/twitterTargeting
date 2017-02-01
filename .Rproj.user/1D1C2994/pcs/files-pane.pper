@@ -1,0 +1,9 @@
+{
+    "path" : "~/datascience/twitter_targeting",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
