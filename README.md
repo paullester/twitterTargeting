@@ -1,5 +1,5 @@
 # twitterTargeting
 
-![alt text](party.png "Description goes here")
+![alt text](party.png)
+![alt text](individual.png)
 
-test test test 
