@@ -16,23 +16,23 @@ extractSource <- function(source.string) {
 extractTarget <- function(Word) {
   Word <- as.character(Word)
   if (str_detect(Word, "hillary")){
-    return ("Crooked Hillary")
+    return ("Hillary")
   } else if (str_detect(Word, "bernie")){
     return("Bernie")
     #} else if (str_detect(Word, "obama")){
     #  return("Obama")
   } else if (str_detect(Word, "cruz")){
-    return("Lyin' Ted")
+    return("Cruz")
   } else if (str_detect(Word, "marco")){
-    return("Little Marco")
+    return("Rubio")
   } else if (str_detect(Word, "rubio")){
-    return("Little Marco")
+    return("Rubio")
   }else if (str_detect(Word, "jeb")){
-    return("Low Energy Jeb")
+    return("Jeb")
   }else if (str_detect(Word, "warren")){
-    return("Goofy Elizabeth Warren")
+    return("Elizabeth Warren")
   }else if (str_detect(Word, "kasich")){
-    return("1 for 38 Kasich")
+    return("Kasich")
   } else {
     return ("No target")
   }
@@ -68,10 +68,11 @@ extractParty <- function(Word) {
 reorderTargets <- function(targets) {
   targetstemp <- targets
   for(i in seq(from=1, to=nrow(targets), by=7)){
-    targetstemp[i,] = targets[i+2,]
-    targetstemp[i+2,] = targets[i+3,]
-    targetstemp[i+3,] = targets[i+6,]
-    targetstemp[i+6,] = targets[i,]
+    targetstemp[i,] = targets[i+3,]
+    targetstemp[i+3,] = targets[i,]
+    targetstemp[i+4,] = targets[i+6,]
+    targetstemp[i+5,] = targets[i+4,]
+    targetstemp[i+6,] = targets[i+5,]
   }
   return(targetstemp)
 }
