@@ -62,18 +62,17 @@ tweet.words <- tweets.df %>%
          str_detect(word, "[a-z]"))
 
 
-
-
 ###########################
 ##Tweets by Party
 ##########################
 
+#extract party
 party <- NULL
 for(i in 1:nrow(tweet.words)) {
   party <- c(party,extractParty(tweet.words[i,"word"]))
 }
-
 tweet.words$party= party
+
 tweet.party.only <- tweet.words[which(!str_detect(tweet.words$party, "No target")),]
 
 #extract target frequency BY DAY
@@ -84,7 +83,7 @@ party.by.days$date <- as.Date(party.by.days$date)
 #Plot 1 - freqency of mentions vs date
 p1 <- ggplot() + geom_line(aes(date, freq, color=party), party.by.days)
 p1
-#Looks like plots needs to go by week to get cleaner lines
+
 
 #BY WEEK
 #note: hacky fix to enumerate weeks after >1 year
@@ -92,34 +91,25 @@ tweet.party.only$week = week(tweet.party.only$date)+(53*(year(tweet.party.only$d
 
 party.by.week = as.data.frame(table(tweet.party.only$party, tweet.party.only$week))
 colnames(party.by.week) <- c("party","week", "freq")
+
+#percentage party mention per week
 party.by.week.percentage<- party.by.week %>% group_by(week) %>% mutate(percentage = freq/sum(freq))
 
 #note this is to allow for geom_Area to map
 party.by.week.percentage$week2 = as.integer(party.by.week.percentage$week)
 
-
-Palette1 <- c('green','blue')
-
-#ATTEMPTING TO FIX ORDER
+#hacky fix to change plot stack order
 party.by.week.percentage$party2 <- factor(party.by.week.percentage$party, levels=c("Republican","Democrat"))
 party.by.week.percentage$party2 <- factor(party.by.week.percentage$party, levels=rev(levels(party.by.week.percentage$party)))
 
-
-
-
-
-p4 <- ggplot() + geom_area(aes(y=percentage, x=week2, fill=party2), party.by.week.percentage, 
+p2 <- ggplot() + geom_area(aes(y=percentage, x=week2, fill=party2), party.by.week.percentage, 
                            stat="identity") + ylab("percentage of tweets") + xlab("week # since Jan")
 
-
-p4 
-
-
-
+p2
 Palette2 <- c('indianred1','dodgerblue2')
 
-
-p4 + scale_x_continuous(breaks=seq(3,72,4),labels=c("Jul15", "Aug15", "Sep15", "Oct15", "Nov15", "Dec15", "Jan16", "Feb16", "Mar16", "Apr16", "May16", "Jun16", "Jul16", "Jul16", "Aug16", "Sep16", "Oct16","Nov16")) + scale_y_continuous(labels = percent) + scale_fill_manual(values = Palette2)
+#Plot output
+p2 + scale_x_continuous(breaks=seq(3,72,4),labels=c("Jul15", "Aug15", "Sep15", "Oct15", "Nov15", "Dec15", "Jan16", "Feb16", "Mar16", "Apr16", "May16", "Jun16", "Jul16", "Jul16", "Aug16", "Sep16", "Oct16","Nov16")) + scale_y_continuous(labels = percent) + scale_fill_manual(values = Palette2)
 
 
 
@@ -134,6 +124,7 @@ p4 + scale_x_continuous(breaks=seq(3,72,4),labels=c("Jul15", "Aug15", "Sep15", "
 #Weakness: sometimes tweets may be directed at the person, but without mentioning them by name
 #Note: ignoring obama for now, because wanted to focus on his direct opponents
 
+#extract targets
 targets <- NULL
 for(i in 1:nrow(tweet.words)) {
   targets <- c(targets,extractTarget(tweet.words[i,"word"]))
@@ -156,28 +147,24 @@ p0
 #BY WEEK
 #note: hacky fix to enumerate weeks after >1 year
 tweet.targets.only$week = week(tweet.targets.only$date)+(53*(year(tweet.targets.only$date)-2015))
+
+
 targets.by.week = as.data.frame(table(tweet.targets.only$target, tweet.targets.only$week))
 colnames(targets.by.week) <- c("target","week", "freq")
 
+#percentage mentions by week
 targets.by.week.percentage<- targets.by.week %>% group_by(week) %>% mutate(percentage = freq/sum(freq))
 
 #note this is to allow for geom_Area to map
 targets.by.week.percentage$week2 = as.integer(targets.by.week.percentage$week)
 
-
+#hacky fix to change plot stack order
 targetstest <- reorderTargets(targets.by.week.percentage)
-
 
 
 p2 <- ggplot() + geom_area(aes(y=percentage, x=week2, fill=target), targetstest, 
                            stat="identity") + ylab("percentage of tweets") + xlab("date")
 
-Palette1 <- c('lightpink','darkslategray1','dodgerblue2','lightskyblue4', 'maroon1','hotpink4','indianred1')
-
 p2 + scale_x_continuous(breaks=seq(3,72,4), 
                         labels=c("Jul15", "Aug15", "Sep15", "Oct15", "Nov15", "Dec15", "Jan16", "Feb16", "Mar16", "Apr16", "May16", "Jun16", "Jul16", "Jul16", "Aug16", "Sep16", "Oct16","Nov16"))+ 
-  scale_y_continuous(labels = percent)
-
-
-
-
+                        scale_y_continuous(labels = percent)
